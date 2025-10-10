@@ -45,8 +45,9 @@ var app = (function () {
                 var x = theObject.x;
                 var y = theObject.y;
 
-                // Mostrar alerta con la información recibida
-                alert("Nuevo punto recibido:\nX: " + x + "\nY: " + y);
+                // Dibujar el punto recibido en el canvas
+                addPointToCanvas(new Point(x, y));
+
             });
         });
     }

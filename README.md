@@ -23,9 +23,27 @@ Se completó el cliente JavaScript para que, además de dibujar los puntos local
 ![alt text](./img/image4.png)
 
 
-#### 3 , 4 y 5
+#### 3 , 4 y 5.
 
 
 compile, ejecute y probe la aplicación en varias pestañas de navegadores diferentes y pude ver que en todas la pestañas se lanzo la alerta con los datos ingresados.
 
 ![alt text](./img/image5.png)
+
+
+### Parte II.
+
+
+#### 1.
+
+Reemplace la línea del alert() por una llamada a addPointToCanvas(new Point(x, y));.
+Ahora, cuando otro cliente publique un punto, automáticamente se dibuja en el canvas compartido
+
+![alt text](./img/image6.png)
+
+
+#### 2 y 3.
+
+Verificamos que funciona 
+
+![alt text](./img/image7.png)
