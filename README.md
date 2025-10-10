@@ -21,3 +21,11 @@ Se completó el cliente JavaScript para que, además de dibujar los puntos local
  modifique la función de conexión al WebSocket para que la aplicación se suscriba al tópico /topic/newpoint en lugar de /TOPICOXX. Además, se agregó un callback que, al recibir un mensaje, convierte su contenido (message.body) en un objeto JSON mediante JSON.parse, extrae las coordenadas X y Y, y muestra un mensaje de alerta con estos valores.
 
 ![alt text](./img/image4.png)
+
+
+#### 3 , 4 y 5
+
+
+compile, ejecute y probe la aplicación en varias pestañas de navegadores diferentes y pude ver que en todas la pestañas se lanzo la alerta con los datos ingresados.
+
+![alt text](./img/image5.png)
