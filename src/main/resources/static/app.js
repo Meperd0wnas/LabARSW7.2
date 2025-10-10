@@ -26,22 +26,31 @@ var app = (function () {
         };
     };
 
-    var connectAndSubscribe = function () {
-        console.info('Connecting to WS...');
+    function connectAndSubscribe() {
+        console.log("Connecting to WebSocket...");
+        
+        // Crear la conexión con el servidor STOMP
         var socket = new SockJS('/stompendpoint');
         stompClient = Stomp.over(socket);
 
-        // Subscribe to topic when connection succeeds
         stompClient.connect({}, function (frame) {
-            console.log('Connected: ' + frame);
+            console.log("Connected: " + frame);
 
-            // Suscribirse al tópico de puntos nuevos
-            stompClient.subscribe('/topic/newpoint', function (eventbody) {
-                var newPoint = JSON.parse(eventbody.body);
-                addPointToCanvas(newPoint);
+            // Suscribirse al tópico "/topic/newpoint"
+            stompClient.subscribe("/topic/newpoint", function (message) {
+                // Extraer el cuerpo del mensaje
+                var theObject = JSON.parse(message.body);
+
+                // Obtener coordenadas X e Y
+                var x = theObject.x;
+                var y = theObject.y;
+
+                // Mostrar alerta con la información recibida
+                alert("Nuevo punto recibido:\nX: " + x + "\nY: " + y);
             });
         });
-    };
+    }
+
 
     return {
 
