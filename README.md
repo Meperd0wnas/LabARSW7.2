@@ -70,3 +70,8 @@ verificamos el nombre dinámico, asociado el identificador ingresado
 
 ![alt text](./img/image10.png)
 
+#### 4.
+
+Verificamos que se puedan realizar dos dibujos de forma independiente
+
+![alt text](./img/image11.png)
