@@ -91,3 +91,9 @@ Creamos el controlador nuevo
 modificamos y verificamos que funcione igual
 
 ![alt text](./img/image13.png)
+
+#### 3 4 y 5.
+
+Se modificó el servidor para que, además de reenviar puntos individuales a /topic/newpoints.{id}, mantenga un buffer por dibujo y publique un polígono cada vez que se acumulen cuatro puntos, asegurando acceso concurrente seguro mediante sincronización por buffer. En el cliente, se ajustó la suscripción para escuchar tanto los puntos individuales como los polígonos en /topic/newpolygon.{id} y se implementó una función defensiva drawPolygon que dibuja correctamente los polígonos recibidos, garantizando compatibilidad con distintos formatos de payload y resolviendo problemas de visualización al recibir varios clientes conectados al mismo dibujo.
+
+![alt text](image.png)

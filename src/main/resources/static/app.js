@@ -11,7 +11,7 @@ var app = (function () {
     var isConnected = false;
     var currentSubscription = null;
 
-    // Dibuja un punto en el canvas (siempre localmente)
+    // Dibuja un punto en el canvas 
     var addPointToCanvas = function (point) {
         var canvas = document.getElementById("canvas");
         if (!canvas) {
@@ -24,6 +24,43 @@ var app = (function () {
         ctx.fill(); // rellena para que se vea mejor
         ctx.closePath();
     };
+    
+
+    var drawPolygon = function(points) {
+        var canvas = document.getElementById("canvas");
+        if (!canvas) { console.warn("Canvas no encontrado"); return; }
+        var ctx = canvas.getContext("2d");
+
+        // Normalizar: asegurarnos que points es un array de {x,y}
+        var pts = points;
+        if (!Array.isArray(pts)) {
+            console.warn("drawPolygon: formato inesperado:", points);
+            return;
+        }
+        if (pts.length < 3) {
+            console.warn("drawPolygon: menos de 3 puntos:", pts.length);
+            return;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(Number(pts[0].x), Number(pts[0].y));
+        for (var i = 1; i < pts.length; i++) {
+            ctx.lineTo(Number(pts[i].x), Number(pts[i].y));
+        }
+        ctx.closePath();
+
+        // Estilos
+        ctx.fillStyle = 'rgba(0,150,255,0.25)';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(0,150,255,0.9)';
+        ctx.stroke();
+
+        console.log("Polígono dibujado con", pts.length, "puntos.");
+    };
+
+
+
 
     // Obtiene la posición del clic en el canvas
     var getMousePosition = function (evt) {
@@ -35,32 +72,76 @@ var app = (function () {
         };
     };
 
-    // Hace la suscripción a /topic/newpoint.{id}
     var doSubscribe = function (id) {
-        // cancelar suscripción anterior si existe
-        try {
-            if (currentSubscription && typeof currentSubscription.unsubscribe === 'function') {
-                currentSubscription.unsubscribe();
-                console.log("Suscripción anterior cancelada.");
+    if (!stompClient) {
+        console.warn("stompClient no inicializado, no puedo subscribir.");
+        return;
+    }
+
+    // cancelar subs previas si existen
+    try {
+        if (currentSubscription) {
+            if (currentSubscription.points && typeof currentSubscription.points.unsubscribe === 'function') {
+                currentSubscription.points.unsubscribe();
             }
-        } catch (e) {
-            console.warn("Error cancelando suscripción previa:", e);
+            if (currentSubscription.polygon && typeof currentSubscription.polygon.unsubscribe === 'function') {
+                currentSubscription.polygon.unsubscribe();
+            }
         }
+    } catch (e) {
+        console.warn("Error cancelando subs previas:", e);
+    }
 
-        // subscribirse y guardar el objeto de suscripción
-        currentSubscription = stompClient.subscribe("/topic/newpoint." + id, function (message) {
-            try {
-                var payload = message.body;
-                var theObject = (typeof payload === "string") ? JSON.parse(payload) : payload;
-                addPointToCanvas(new Point(theObject.x, theObject.y));
-                console.log("Punto recibido y dibujado desde topic:", theObject);
-            } catch (err) {
-                console.error("Error procesando mensaje recibido:", err, message);
+    console.log("Creando subs para id =", id);
+
+    // subs a puntos individuales
+    var pointsSub = stompClient.subscribe("/topic/newpoints." + id, function (message) {
+        console.log("Callback /topic/newpoints." + id + " - message:", message);
+        try {
+            var payload = message.body;
+            var obj = (typeof payload === "string") ? JSON.parse(payload) : payload;
+            console.log("Punto recibido en /topic/newpoints." + id + " ->", obj);
+            if (obj && typeof obj.x !== 'undefined' && typeof obj.y !== 'undefined') {
+                addPointToCanvas(new Point(obj.x, obj.y));
+            } else {
+                console.warn("Payload de punto con formato inesperado:", obj);
             }
-        });
+        } catch (err) {
+            console.error("Error parseando mensaje de puntos:", err, message);
+        }
+    });
 
-        console.log("Suscrito a /topic/newpoint." + id);
-    };
+    // subs a polígonos 
+    var polygonSub = stompClient.subscribe("/topic/newpolygon." + id, function (message) {
+        console.log("Callback /topic/newpolygon." + id + " - message:", message);
+        try {
+            var payload = message.body;
+            var obj = (typeof payload === "string") ? JSON.parse(payload) : payload;
+            console.log("Polígono recibido en /topic/newpolygon." + id + " ->", obj);
+            // Manejar distintos formatos:
+            var pts = null;
+            if (obj) {
+                if (Array.isArray(obj)) pts = obj;
+                else if (Array.isArray(obj.points)) pts = obj.points;
+                else if (Array.isArray(obj.pointsArray)) pts = obj.pointsArray; 
+            }
+            if (pts && pts.length >= 3) {
+                drawPolygon(pts);
+            } else {
+                console.warn("Formato o número de puntos inválido para polígono:", obj);
+            }
+        } catch (err) {
+            console.error("Error parseando mensaje de polígonos:", err, message);
+        }
+    });
+
+    // guardar referencias para cancelación
+    currentSubscription = { points: pointsSub, polygon: polygonSub };
+
+    console.log("Suscrito a /topic/newpoints." + id + " (id subs: " + (pointsSub && pointsSub.id) + ")");
+    console.log("Suscrito a /topic/newpolygon." + id + " (id subs: " + (polygonSub && polygonSub.id) + ")");
+};
+
 
     // Conecta a STOMP/SockJS y se suscribe al topic indicado
     var connectAndSubscribe = function () {
