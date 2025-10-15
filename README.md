@@ -64,6 +64,9 @@ agregué el boton para conectarse y suscribirse a un tópico
 
 ![alt text](./img/image9.png)
 
+#### 3.
+
 verificamos el nombre dinámico, asociado el identificador ingresado
 
 ![alt text](./img/image10.png)
+
