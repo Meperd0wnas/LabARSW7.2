@@ -47,3 +47,11 @@ Ahora, cuando otro cliente publique un punto, automáticamente se dibuja en el c
 Verificamos que funciona 
 
 ![alt text](./img/image7.png)
+
+
+### Parte III.
+
+#### 1.
+
+agregué un campo en la vista para identificar el dibujo que se creara
+![alt text](image.png)

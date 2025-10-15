@@ -29,10 +29,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     
-    <body onload="app.init()">
-        X:<input id="x" type="number"/>
-        Y:<input id="y" type="number"/>        
-        <button onclick="app.publishPoint($('#x').val(),$('#y').val())">Send point</button>
-        <canvas id="canvas" width="800" height="600"></canvas>
-    </body>
+<body onload="app.init()">
+    <label for="drawId">ID del dibujo:</label>
+    <input id="drawId" type="number" placeholder="Ej: 1" min="1" style="width: 60px;" />
+    <br><br>
+
+    X:<input id="x" type="number"/>
+    Y:<input id="y" type="number"/>        
+    <button onclick="app.publishPoint($('#x').val(), $('#y').val())">Send point</button>
+
+    <br><br>
+    <canvas id="canvas" width="800" height="600" style="border:1px solid black;"></canvas>
+</body>
 </html>

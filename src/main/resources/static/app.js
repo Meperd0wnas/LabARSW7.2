@@ -37,7 +37,9 @@ var app = (function () {
             console.log("Connected: " + frame);
 
             // Suscribirse al tópico "/topic/newpoint"
-            stompClient.subscribe("/topic/newpoint", function (message) {
+            var id = document.getElementById("drawId").value || 1;
+            stompClient.subscribe("/topic/newpoint." + id, function (message) {
+
                 // Extraer el cuerpo del mensaje
                 var theObject = JSON.parse(message.body);
 
@@ -76,7 +78,9 @@ var app = (function () {
             addPointToCanvas(pt);
 
             // Enviar al servidor mediante STOMP
-            stompClient.send("/topic/newpoint", {}, JSON.stringify(pt));
+            var id = document.getElementById("drawId").value || 1;
+            stompClient.send("/topic/newpoint." + id, {}, JSON.stringify(pt));
+
         },
 
         disconnect: function () {
