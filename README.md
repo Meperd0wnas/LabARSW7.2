@@ -54,4 +54,9 @@ Verificamos que funciona
 #### 1.
 
 agregué un campo en la vista para identificar el dibujo que se creara
-![alt text](image.png)
+
+![alt text](./img/image8.png)
+
+
+#### 2.
+
