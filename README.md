@@ -75,3 +75,19 @@ verificamos el nombre dinámico, asociado el identificador ingresado
 Verificamos que se puedan realizar dos dibujos de forma independiente
 
 ![alt text](./img/image11.png)
+
+
+### Parte IV:
+
+#### 1.
+
+Creamos el controlador nuevo 
+
+![alt text](./img/image12.png)
+
+
+#### 2.
+
+modificamos y verificamos que funcione igual
+
+![alt text](./img/image13.png)
