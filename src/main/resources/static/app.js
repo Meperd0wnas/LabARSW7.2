@@ -26,61 +26,53 @@ var app = (function () {
         };
     };
 
-    function connectAndSubscribe() {
+    var connectAndSubscribe = function () {
         console.log("Connecting to WebSocket...");
-        
-        // Crear la conexión con el servidor STOMP
+
         var socket = new SockJS('/stompendpoint');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, function (frame) {
             console.log("Connected: " + frame);
 
-            // Suscribirse al tópico "/topic/newpoint"
             var id = document.getElementById("drawId").value || 1;
             stompClient.subscribe("/topic/newpoint." + id, function (message) {
-
-                // Extraer el cuerpo del mensaje
                 var theObject = JSON.parse(message.body);
-
-                // Obtener coordenadas X e Y
-                var x = theObject.x;
-                var y = theObject.y;
-
-                // Dibujar el punto recibido en el canvas
-                addPointToCanvas(new Point(x, y));
-
+                addPointToCanvas(new Point(theObject.x, theObject.y));
             });
-        });
-    }
 
+            alert("Conectado al dibujo #" + id);
+        });
+    };
 
     return {
 
         init: function () {
             var can = document.getElementById("canvas");
 
-            // evento de clic para dibujar y enviar el punto
             can.addEventListener("click", function (evt) {
                 var mousePos = getMousePosition(evt);
                 app.publishPoint(mousePos.x, mousePos.y);
             });
 
-            // conexión WebSocket
+            console.log("Canvas listo. Esperando conexión...");
+        },
+
+        connect: function () {
             connectAndSubscribe();
         },
 
         publishPoint: function (px, py) {
             var pt = new Point(px, py);
             console.info("Publishing point at " + JSON.stringify(pt));
-
-            // Dibujar localmente
             addPointToCanvas(pt);
 
-            // Enviar al servidor mediante STOMP
-            var id = document.getElementById("drawId").value || 1;
-            stompClient.send("/topic/newpoint." + id, {}, JSON.stringify(pt));
-
+            if (stompClient && stompClient.connected) {
+                var id = document.getElementById("drawId").value || 1;
+                stompClient.send("/topic/newpoint." + id, {}, JSON.stringify(pt));
+            } else {
+                console.warn("No hay conexión activa.");
+            }
         },
 
         disconnect: function () {

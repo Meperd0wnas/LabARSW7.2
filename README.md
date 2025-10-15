@@ -60,3 +60,10 @@ agregué un campo en la vista para identificar el dibujo que se creara
 
 #### 2.
 
+agregué el boton para conectarse y suscribirse a un tópico
+
+![alt text](./img/image9.png)
+
+verificamos el nombre dinámico, asociado el identificador ingresado
+
+![alt text](./img/image10.png)
